@@ -2,36 +2,25 @@ package es.neivi.seb.event;
 
 import java.util.concurrent.Executor;
 
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
-import org.springframework.util.Assert;
 
 import es.neivi.smb.annotation.RootMessageEntityDescriptor;
-import es.neivi.smb.handler.AbstractMessageHandler;
-import es.neivi.smb.handler.MessageHandler;
 import es.neivi.smb.publisher.MessagePublisher;
 
-public class SEBEventMulticaster extends SimpleApplicationEventMulticaster {
+public class SEBEventMulticaster extends SimpleApplicationEventMulticaster
+		implements BeanFactoryAware {
+
+	private BeanFactory beanFactory;
 
 	private transient Class<?> rootMessageEntityType;
 
 	// Publishing responsabilities
-	@Autowired
 	private MessagePublisher eventPublisher;
-
-	/**
-	 * Messages being consumed from MONGODB are sent to the Lis
-	 */
-	private final MessageHandler messageHandler = new AbstractMessageHandler() {
-
-		@Override
-		public void handleMessage(Object event) {
-			Assert.isTrue(event instanceof ApplicationEvent);
-			invokeListeners((ApplicationEvent) event);
-		}
-	};
 
 	/**
 	 * Here is where de multicaster operates as an EVENT PUBLISHER to a MONGO
@@ -71,10 +60,6 @@ public class SEBEventMulticaster extends SimpleApplicationEventMulticaster {
 		}
 	}
 
-	public MessageHandler getMessageHandler() {
-		return messageHandler;
-	}
-
 	@Autowired
 	public void setRootMessageEntityDescriptor(
 			RootMessageEntityDescriptor rootMessageEntityType) {
@@ -84,6 +69,21 @@ public class SEBEventMulticaster extends SimpleApplicationEventMulticaster {
 
 	public boolean validatePayload(Object payload) {
 		return rootMessageEntityType.isAssignableFrom(payload.getClass());
+	}
+
+	public MessagePublisher getEventPublisher() {
+		if (eventPublisher == null)
+			eventPublisher = getBeanFactory().getBean(MessagePublisher.class);
+		return eventPublisher;
+	}
+
+	private BeanFactory getBeanFactory() {
+		if (this.beanFactory == null) {
+			throw new IllegalStateException(
+					"ApplicationEventMulticaster cannot retrieve listener beans "
+							+ "because it is not associated with a BeanFactory");
+		}
+		return this.beanFactory;
 	}
 
 }
