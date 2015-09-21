@@ -2,9 +2,9 @@ package es.neivi.seb.event;
 
 import java.util.concurrent.Executor;
 
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
@@ -13,9 +13,9 @@ import es.neivi.smb.annotation.RootMessageEntityDescriptor;
 import es.neivi.smb.publisher.MessagePublisher;
 
 public class SEBEventMulticaster extends SimpleApplicationEventMulticaster
-		implements BeanFactoryAware {
+		implements ApplicationContextAware {
 
-	private BeanFactory beanFactory;
+	private ApplicationContext applicationContext;
 
 	private transient Class<?> rootMessageEntityType;
 
@@ -32,7 +32,7 @@ public class SEBEventMulticaster extends SimpleApplicationEventMulticaster
 			if (!validatePayload(event))
 				throw new RuntimeException(
 						"Invalid Message to be published to mongo db");
-			eventPublisher.publish(event);
+			getEventPublisher().publish(event);
 		} catch (Throwable t) {
 			// Problems: Lets proceed as usual.
 			super.multicastEvent(event);
@@ -73,17 +73,22 @@ public class SEBEventMulticaster extends SimpleApplicationEventMulticaster
 
 	public MessagePublisher getEventPublisher() {
 		if (eventPublisher == null)
-			eventPublisher = getBeanFactory().getBean(MessagePublisher.class);
+			eventPublisher = getApplicationContext().getBean(MessagePublisher.class);
 		return eventPublisher;
 	}
 
-	private BeanFactory getBeanFactory() {
-		if (this.beanFactory == null) {
+	private ApplicationContext getApplicationContext() {
+		if (this.applicationContext == null) {
 			throw new IllegalStateException(
 					"ApplicationEventMulticaster cannot retrieve listener beans "
 							+ "because it is not associated with a BeanFactory");
 		}
-		return this.beanFactory;
+		return this.applicationContext;
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
 	}
 
 }
