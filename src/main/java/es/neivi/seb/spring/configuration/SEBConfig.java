@@ -1,15 +1,13 @@
 package es.neivi.seb.spring.configuration;
 
 import java.util.Arrays;
+import java.util.concurrent.Executor;
 
-import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.Environment;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.mongodb.MongoClient;
@@ -19,8 +17,8 @@ import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 
 import es.neivi.seb.event.SEBEventMulticaster;
+import es.neivi.smb.annotation.AbstractSMBConfigurer;
 import es.neivi.smb.annotation.EnableSMB;
-import es.neivi.smb.annotation.SMBConfigurer;
 import es.neivi.smb.handler.MessageHandler;
 
 /**
@@ -28,37 +26,35 @@ import es.neivi.smb.handler.MessageHandler;
  * required.
  */
 @Configuration
-@EnableSMB(consumerId = "APP1")
+@ComponentScan
+@EnableSMB
 @PropertySource("classpath:/META-INF/application.properties")
-public class SEBConfig implements SMBConfigurer, EnvironmentAware {
-
-	private Environment environment;
-
-	public void setEnvironment(Environment environment) {
-		this.environment = environment;
-	}
+public class SEBConfig extends AbstractSMBConfigurer {
 
 	@Bean(name = AbstractApplicationContext.APPLICATION_EVENT_MULTICASTER_BEAN_NAME)
 	public SEBEventMulticaster applicationEventMulticaster() {
 		return new SEBEventMulticaster();
 	}
 
-	@Bean
-	public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-		return new PropertySourcesPlaceholderConfigurer();
-	}
+	@Override
+	public Executor getExecutor() {
 
-	public TaskExecutor getTaskExecutor() {
+		// TaskExecutor executor = new SyncTaskExecutor();
+
 		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+		executor.setWaitForTasksToCompleteOnShutdown(true);
 		executor.setCorePoolSize(5);
 		executor.setMaxPoolSize(40);
 		executor.setKeepAliveSeconds(0);
 		executor.setThreadNamePrefix("SMB-");
 		executor.initialize();
+
+		executor.setAwaitTerminationSeconds(60);
 		return executor;
 	}
 
-	public MongoClient getMongoClient() throws Exception {
+	@Override
+	public MongoClient getMongoClient() {
 		MongoClientOptions options = MongoClientOptions.builder()
 				.readPreference(ReadPreference.primary())
 				.writeConcern(WriteConcern.JOURNALED).connectionsPerHost(10)
@@ -67,16 +63,8 @@ public class SEBConfig implements SMBConfigurer, EnvironmentAware {
 				options);
 	}
 
-	public String getDatabaseName() {
-		return environment.getRequiredProperty("databasename");
-	}
-
-	@Bean
+	@Override
 	public MessageHandler messageHandler() {
 		return applicationEventMulticaster().getMessageHandler();
-	}
-
-	public long getCursorRegenerationDelay() {
-		return 0;
 	}
 }

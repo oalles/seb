@@ -7,19 +7,23 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 import org.springframework.util.Assert;
-import org.springframework.util.ErrorHandler;
 
+import es.neivi.smb.annotation.RootMessageEntityDescriptor;
 import es.neivi.smb.handler.AbstractMessageHandler;
 import es.neivi.smb.handler.MessageHandler;
 import es.neivi.smb.publisher.MessagePublisher;
 
-//@Component
 public class SEBEventMulticaster extends SimpleApplicationEventMulticaster {
+
+	private transient Class<?> rootMessageEntityType;
 
 	// Publishing responsabilities
 	@Autowired
 	private MessagePublisher eventPublisher;
 
+	/**
+	 * Messages being consumed from MONGODB are sent to the Lis
+	 */
 	private final MessageHandler messageHandler = new AbstractMessageHandler() {
 
 		@Override
@@ -30,17 +34,27 @@ public class SEBEventMulticaster extends SimpleApplicationEventMulticaster {
 	};
 
 	/**
-	 * multicast as publish, invokeListeners as handler
+	 * Here is where de multicaster operates as an EVENT PUBLISHER to a MONGO
+	 * CAPPED COLLECTION
 	 */
 	@Override
 	public void multicastEvent(final ApplicationEvent event) {
 		try {
+			if (!validatePayload(event))
+				throw new RuntimeException(
+						"Invalid Message to be published to mongo db");
 			eventPublisher.publish(event);
 		} catch (Throwable t) {
+			// Problems: Lets proceed as usual.
 			super.multicastEvent(event);
 		}
 	}
 
+	/**
+	 * Here is where de multicaster operates as an EVENT CONSUMER from a MONGO
+	 * CAPPED COLLECTION. It is not called by the multicaster, is invoked when
+	 * there is an event to be processed.
+	 */
 	public final void invokeListeners(ApplicationEvent event) {
 		for (final ApplicationListener<?> listener : getApplicationListeners(event)) {
 			Executor executor = getTaskExecutor();
@@ -57,32 +71,19 @@ public class SEBEventMulticaster extends SimpleApplicationEventMulticaster {
 		}
 	}
 
-	/**
-	 * Invoke the given listener with the given event.
-	 * 
-	 * @param listener
-	 *            the ApplicationListener to invoke
-	 * @param event
-	 *            the current event to propagate
-	 * @since 4.1
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void invokeListener(ApplicationListener listener,
-			ApplicationEvent event) {
-		ErrorHandler errorHandler = getErrorHandler();
-		if (errorHandler != null) {
-			try {
-				listener.onApplicationEvent(event);
-			} catch (Throwable err) {
-				errorHandler.handleError(err);
-			}
-		} else {
-			listener.onApplicationEvent(event);
-		}
-	}
-
 	public MessageHandler getMessageHandler() {
 		return messageHandler;
+	}
+
+	@Autowired
+	public void setRootMessageEntityDescriptor(
+			RootMessageEntityDescriptor rootMessageEntityType) {
+		this.rootMessageEntityType = rootMessageEntityType
+				.getRootMessageEntityType();
+	}
+
+	public boolean validatePayload(Object payload) {
+		return rootMessageEntityType.isAssignableFrom(payload.getClass());
 	}
 
 }
