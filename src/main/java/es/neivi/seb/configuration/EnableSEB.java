@@ -1,4 +1,4 @@
-package es.neivi.seb.spring.configuration;
+package es.neivi.seb.configuration;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

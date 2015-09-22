@@ -1,4 +1,4 @@
-package es.neivi.seb.spring.configuration;
+package es.neivi.seb.configuration;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;

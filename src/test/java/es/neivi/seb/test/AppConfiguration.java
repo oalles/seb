@@ -1,12 +1,12 @@
 package es.neivi.seb.test;
 
 import java.util.Arrays;
-import java.util.concurrent.Executor;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import com.mongodb.MongoClient;
@@ -15,9 +15,8 @@ import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 
-import es.neivi.seb.spring.configuration.AbstractSEBConfigurer;
-import es.neivi.seb.spring.configuration.EnableSEB;
-import es.neivi.smb.handler.MessageHandler;
+import es.neivi.seb.configuration.AbstractSEBConfigurer;
+import es.neivi.seb.configuration.EnableSEB;
 
 @Configuration
 @ComponentScan
@@ -31,7 +30,7 @@ public class AppConfiguration extends AbstractSEBConfigurer {
 	}
 
 	@Override
-	public Executor getExecutor() {
+	public TaskExecutor getExecutor() {
 
 		// TaskExecutor executor = new SyncTaskExecutor();
 
