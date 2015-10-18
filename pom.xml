@@ -209,4 +209,5 @@
 			</plugin>
 		</plugins>
 	</build>
+	<url>https://github.com/oalles/seb</url>
 </project>
