@@ -2,22 +2,23 @@ package es.neivi.seb.event;
 
 import java.util.concurrent.Executor;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
 
-import es.neivi.smb.annotation.RootMessageEntityDescriptor;
 import es.neivi.smb.publisher.MessagePublisher;
 
 public class SEBEventMulticaster extends SimpleApplicationEventMulticaster
 		implements ApplicationContextAware {
 
-	private ApplicationContext applicationContext;
+	private static Logger LOG = LoggerFactory
+			.getLogger(SEBEventMulticaster.class);
 
-	private transient Class<?> rootMessageEntityType;
+	private ApplicationContext applicationContext;
 
 	// Publishing responsabilities
 	private MessagePublisher eventPublisher;
@@ -29,12 +30,10 @@ public class SEBEventMulticaster extends SimpleApplicationEventMulticaster
 	@Override
 	public void multicastEvent(final ApplicationEvent event) {
 		try {
-			if (!validatePayload(event))
-				throw new RuntimeException(
-						"Invalid Message to be published to mongo db");
 			getEventPublisher().publish(event);
 		} catch (Throwable t) {
 			// Problems: Lets proceed as usual.
+			LOG.error("Cant multicast event to EB", t);
 			super.multicastEvent(event);
 		}
 	}
@@ -60,20 +59,10 @@ public class SEBEventMulticaster extends SimpleApplicationEventMulticaster
 		}
 	}
 
-	@Autowired
-	public void setRootMessageEntityDescriptor(
-			RootMessageEntityDescriptor rootMessageEntityType) {
-		this.rootMessageEntityType = rootMessageEntityType
-				.getRootMessageEntityType();
-	}
-
-	public boolean validatePayload(Object payload) {
-		return rootMessageEntityType.isAssignableFrom(payload.getClass());
-	}
-
 	public MessagePublisher getEventPublisher() {
 		if (eventPublisher == null)
-			eventPublisher = getApplicationContext().getBean(MessagePublisher.class);
+			eventPublisher = getApplicationContext().getBean(
+					MessagePublisher.class);
 		return eventPublisher;
 	}
 
