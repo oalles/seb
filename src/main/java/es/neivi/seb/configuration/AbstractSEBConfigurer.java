@@ -1,28 +1,22 @@
 package es.neivi.seb.configuration;
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-
 import es.neivi.smb.annotation.AbstractSMBConfigurer;
 import es.neivi.smb.handler.MessageHandler;
 
 /**
- * Override this. MongoClient, databaseName and events collection name are
- * required.
+ * Contract to provide the concreted expected instances to set a broadcast
+ * channel.
+ * 
+ * Helpernotified by the environment for required properties to set a broadcast
+ * channel through a mongodb tailable collection.
  */
-public abstract class AbstractSEBConfigurer extends AbstractSMBConfigurer
-		implements ApplicationContextAware {
+public abstract class AbstractSEBConfigurer extends AbstractSMBConfigurer {
 
-	private ApplicationContext applicationContext;
-
-	public MessageHandler messageHandler() {
+	/**
+	 * How does SEB handle a Message=event being broadcasted? Once the event is
+	 * obtained it let the Multicaster to notify to all listeners.
+	 */
+	public final MessageHandler messageHandler() {
 		return new SEBMessageHandler();
-	}
-
-	public void setApplicationContext(ApplicationContext applicationContext)
-			throws BeansException {
-		this.applicationContext = applicationContext;
-
 	}
 }

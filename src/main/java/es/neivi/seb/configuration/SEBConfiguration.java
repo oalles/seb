@@ -13,5 +13,4 @@ public class SEBConfiguration {
 	public SEBEventMulticaster applicationEventMulticaster() {
 		return new SEBEventMulticaster();
 	}
-
 }

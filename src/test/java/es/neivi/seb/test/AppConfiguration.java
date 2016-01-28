@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -54,5 +55,10 @@ public class AppConfiguration extends AbstractSEBConfigurer {
 				.build();
 		return new MongoClient(Arrays.asList(new ServerAddress("localhost")),
 				options);
+	}
+
+	@Override
+	public void setEnvironment(Environment environment) {
+		this.env = environment;
 	}
 }
