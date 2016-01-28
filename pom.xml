@@ -19,7 +19,7 @@
 		<maven-eclipse-plugin>2.9</maven-eclipse-plugin>
 		<maven-resources-plugin>2.6</maven-resources-plugin>
 		<maven-compiler-plugin>2.5.1</maven-compiler-plugin>
-		<spring.version>4.1.9.RELEASE</spring.version>
+		<spring.version>4.2.4.RELEASE</spring.version>
 	</properties>
 	<repositories>
 		<repository>

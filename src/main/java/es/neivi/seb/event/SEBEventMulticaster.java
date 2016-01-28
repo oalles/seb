@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.SimpleApplicationEventMulticaster;
+import org.springframework.core.ResolvableType;
 
 import es.neivi.smb.publisher.MessagePublisher;
 
@@ -29,6 +30,7 @@ public class SEBEventMulticaster extends SimpleApplicationEventMulticaster
 	 */
 	@Override
 	public void multicastEvent(final ApplicationEvent event) {
+
 		try {
 			getEventPublisher().publish(event);
 		} catch (Throwable t) {
@@ -44,7 +46,8 @@ public class SEBEventMulticaster extends SimpleApplicationEventMulticaster
 	 * there is an event to be processed.
 	 */
 	public final void invokeListeners(ApplicationEvent event) {
-		for (final ApplicationListener<?> listener : getApplicationListeners(event)) {
+		for (final ApplicationListener<?> listener : getApplicationListeners(
+				event, ResolvableType.forInstance(event))) {
 			Executor executor = getTaskExecutor();
 			if (executor != null) {
 				executor.execute(new Runnable() {

@@ -8,6 +8,7 @@ import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.annotation.AliasFor;
 
 import es.neivi.smb.annotation.EnableSMB;
 
@@ -28,4 +29,17 @@ import es.neivi.smb.annotation.EnableSMB;
 @Documented
 @EnableSMB
 public @interface EnableSEB {
+	
+	/**
+	 * Alias for the {@link #mappingBasePackageClass()} attribute.
+	 */
+	@AliasFor(annotation = EnableSMB.class, attribute = "value")
+	String value() default "";
+
+	/**
+	 * Base package to scan for annotated components.
+	 * <p>
+	 */
+	@AliasFor(annotation = EnableSMB.class, attribute = "mappingBasePackage")
+	String mappingBasePackage() default "";
 }
