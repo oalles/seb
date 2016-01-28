@@ -30,13 +30,19 @@ public class SEBEventMulticaster extends SimpleApplicationEventMulticaster
 	 */
 	@Override
 	public void multicastEvent(final ApplicationEvent event) {
+		super.multicastEvent(event);
+	}
+
+	@Override
+	public void multicastEvent(final ApplicationEvent event,
+			ResolvableType eventType) {
 
 		try {
 			getEventPublisher().publish(event);
 		} catch (Throwable t) {
 			// Problems: Lets proceed as usual.
 			LOG.error("Cant multicast event to EB", t);
-			super.multicastEvent(event);
+			super.multicastEvent(event, eventType);
 		}
 	}
 

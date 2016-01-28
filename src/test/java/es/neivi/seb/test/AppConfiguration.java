@@ -21,7 +21,7 @@ import es.neivi.seb.configuration.EnableSEB;
 
 @Configuration
 @ComponentScan
-@EnableSEB
+@EnableSEB(mappingBasePackage = "es.neivi")
 @PropertySource("classpath:/META-INF/application.properties")
 public class AppConfiguration extends AbstractSEBConfigurer {
 
