@@ -36,3 +36,4 @@ tmp/
 
 dependency-reduced-pom.xml
 local.properties
+/.apt_generated/
