@@ -13,11 +13,9 @@ import org.springframework.core.ResolvableType;
 
 import es.neivi.smb.publisher.MessagePublisher;
 
-public class SEBEventMulticaster extends SimpleApplicationEventMulticaster
-		implements ApplicationContextAware {
+public class SEBEventMulticaster extends SimpleApplicationEventMulticaster implements ApplicationContextAware {
 
-	private static Logger LOG = LoggerFactory
-			.getLogger(SEBEventMulticaster.class);
+	private static Logger LOG = LoggerFactory.getLogger(SEBEventMulticaster.class);
 
 	private ApplicationContext applicationContext;
 
@@ -34,14 +32,12 @@ public class SEBEventMulticaster extends SimpleApplicationEventMulticaster
 	}
 
 	@Override
-	public void multicastEvent(final ApplicationEvent event,
-			ResolvableType eventType) {
+	public void multicastEvent(final ApplicationEvent event, ResolvableType eventType) {
 
 		try {
 			getEventPublisher().publish(event);
 		} catch (Throwable t) {
 			// Problems: Lets proceed as usual.
-			LOG.error("Cant multicast event to EB", t);
 			super.multicastEvent(event, eventType);
 		}
 	}
@@ -52,8 +48,8 @@ public class SEBEventMulticaster extends SimpleApplicationEventMulticaster
 	 * there is an event to be processed.
 	 */
 	public final void invokeListeners(ApplicationEvent event) {
-		for (final ApplicationListener<?> listener : getApplicationListeners(
-				event, ResolvableType.forInstance(event))) {
+		for (final ApplicationListener<?> listener : getApplicationListeners(event,
+				ResolvableType.forInstance(event))) {
 			Executor executor = getTaskExecutor();
 			if (executor != null) {
 				executor.execute(new Runnable() {
@@ -70,16 +66,14 @@ public class SEBEventMulticaster extends SimpleApplicationEventMulticaster
 
 	public MessagePublisher getEventPublisher() {
 		if (eventPublisher == null)
-			eventPublisher = getApplicationContext().getBean(
-					MessagePublisher.class);
+			eventPublisher = getApplicationContext().getBean(MessagePublisher.class);
 		return eventPublisher;
 	}
 
 	private ApplicationContext getApplicationContext() {
 		if (this.applicationContext == null) {
-			throw new IllegalStateException(
-					"ApplicationEventMulticaster cannot retrieve listener beans "
-							+ "because it is not associated with a BeanFactory");
+			throw new IllegalStateException("ApplicationEventMulticaster cannot retrieve listener beans "
+					+ "because it is not associated with a BeanFactory");
 		}
 		return this.applicationContext;
 	}
