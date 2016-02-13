@@ -1,7 +1,7 @@
-package es.neivi.seb.configuration;
+package es.omarall.seb.configuration;
 
-import es.neivi.smb.annotation.AbstractSMBConfigurer;
-import es.neivi.smb.handler.MessageHandler;
+import es.omarall.smb.annotation.AbstractSMBConfigurer;
+import es.omarall.smb.handler.MessageHandler;
 
 /**
  * Contract to provide the concreted expected instances to set a broadcast

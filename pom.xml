@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>es.neivi</groupId>
+	<groupId>es.omarall</groupId>
 	<artifactId>seb</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>es.neivi.seb</name>
+	<name>Spring Event Broadcaster</name>
 	<properties>
 		<java.version>1.8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -57,9 +57,9 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>es.neivi</groupId>
+			<groupId>es.omarall</groupId>
 			<artifactId>smb</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.1-SNAPSHOT</version>
 		</dependency>
 		
 		<!-- Spring dependencies -->
@@ -189,4 +189,9 @@
 		</plugins>
 	</build>
 	<url>https://github.com/oalles/seb</url>
+	<description>SEB is an implementation for a Spring Event Multicaster that allows Spring ApplicationContext instances to be connected through an event broadcaster based on spring data mongodb project.</description>
+	<organization>
+		<name>Omar Alles</name>
+		<url>https://omarall.es</url>
+	</organization>
 </project>

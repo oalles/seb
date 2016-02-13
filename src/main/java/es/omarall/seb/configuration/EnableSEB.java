@@ -1,4 +1,4 @@
-package es.neivi.seb.configuration;
+package es.omarall.seb.configuration;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.AliasFor;
 
-import es.neivi.smb.annotation.EnableSMB;
+import es.omarall.smb.annotation.EnableSMB;
 
 /**
  * Enables Simple Mongo Broadcaster capability, to be used on @

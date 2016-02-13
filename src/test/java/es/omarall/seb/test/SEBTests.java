@@ -1,9 +1,8 @@
-package es.neivi.seb.test;
+package es.omarall.seb.test;
 
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -13,7 +12,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
-import es.neivi.seb.test.events.MessageCreatedEvent;
+import es.omarall.seb.test.events.MessageCreatedEvent;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { AppConfiguration.class }, loader = AnnotationConfigContextLoader.class)
@@ -22,11 +21,6 @@ import es.neivi.seb.test.events.MessageCreatedEvent;
 public class SEBTests extends AbstractJUnit4SpringContextTests {
 
 	private static Logger LOG = LoggerFactory.getLogger(SEBTests.class);
-
-	@Before
-	public void beforeTest() throws Exception {
-
-	}
 
 	@After
 	public void afterTest() {

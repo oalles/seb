@@ -1,10 +1,10 @@
-package es.neivi.seb.configuration;
+package es.omarall.seb.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.AbstractApplicationContext;
 
-import es.neivi.seb.event.SEBEventMulticaster;
+import es.omarall.seb.event.SEBEventMulticaster;
 
 @Configuration
 public class SEBConfiguration {
